@@ -1,0 +1,2 @@
+- The base color for headers is #335050. Text is #113030.
+- Background is always #F6F9F9.

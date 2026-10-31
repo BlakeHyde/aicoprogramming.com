@@ -1,0 +1,22 @@
+---
+layout: base.njk
+---
+{% macro articleTree(nodes) %}
+<ol class="essay-list">
+  {% for essay in nodes %}
+  <li>
+    <a href="{{ essay.url | url }}">
+      <span class="essay-number" aria-label="Essay {{ essay.serial }}">{{ essay.label }}</span>
+      <h2>{{ essay.title }}</h2>
+    </a>
+    {% if essay.children.length %}{{ articleTree(essay.children) }}{% endif %}
+  </li>
+  {% endfor %}
+</ol>
+{% endmacro %}
+<header class="home-header">
+  <h1>AI Co-Programming.</h1>
+</header>
+<nav class="essay-pathway" aria-label="Essays in reading order">
+  {{ articleTree(essays | essayTree) }}
+</nav>

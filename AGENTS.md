@@ -1,0 +1,3 @@
+- There is to be NO AI COPY.
+- You may not edit any essay in `/raw-essays`.
+- Consult `/design` at the root of the repo for design rules.

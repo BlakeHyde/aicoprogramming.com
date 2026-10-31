@@ -1,0 +1,26 @@
+---
+layout: base.njk
+pagination:
+  data: essays
+  size: 1
+  alias: essay
+permalink: "{{ essay.url }}"
+---
+<article class="article">
+  <header class="article-header">
+    <a class="back-link" href="{{ '/' | url }}">← All essays</a>
+    <p class="eyebrow">Essay {{ essay.serial | serialLabel }} <span aria-hidden="true">/</span> {{ essay.body | readingTime }} min read</p>
+    <h1>{{ essay.title }}</h1>
+  </header>
+  <div class="prose">{{ essay.html | safe }}</div>
+  <nav class="essay-navigation" aria-label="Essay navigation">
+    {% if essay.previous %}
+    <a href="{{ essay.previous.url | url }}"><span>← Previous essay</span>{{ essay.previous.title }}</a>
+    {% endif %}
+    {% if essay.next %}
+    <a class="next-essay" href="{{ essay.next.url | url }}"><span>Next essay →</span>{{ essay.next.title }}</a>
+    {% else %}
+    <a class="next-essay" href="{{ '/' | url }}"><span>Back to the collection →</span>All essays</a>
+    {% endif %}
+  </nav>
+</article>

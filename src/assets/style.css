@@ -1,0 +1,89 @@
+:root {
+  color-scheme: light;
+  --ink: #335050;
+  --body: #113030;
+  --background: #F6F9F9;
+  --rule: #c7d4d4;
+  --mono: "IBM Plex Mono", monospace;
+  --sans: "IBM Plex Sans", sans-serif;
+  font-family: var(--sans);
+  color: var(--body);
+  background: var(--background);
+  font-synthesis: none;
+}
+* { box-sizing: border-box; }
+body { margin: 0; }
+a { color: inherit; text-underline-offset: .2em; text-decoration-thickness: 1px; }
+a:hover { text-decoration: underline; }
+a:focus-visible { outline: 2px solid var(--ink); outline-offset: 5px; }
+::selection { background: var(--ink); color: var(--background); }
+.shell { width: min(100% - 3rem, 1000px); margin-inline: auto; padding-bottom: 5rem; }
+.skip-link { position: absolute; left: 1rem; top: -5rem; background: var(--background); padding: .75rem; z-index: 1; }
+.skip-link:focus { top: 1rem; }
+h1, h2, h3, h4, h5, h6 { color: var(--ink); font-family: var(--mono); }
+h1 { margin: 0; font-size: clamp(2rem, 5vw, 3rem); line-height: 1.25; font-weight: 400; text-wrap: balance; }
+.home-header { padding-top: clamp(4rem, 10vw, 8rem); }
+.essay-pathway { padding-top: 4rem; }
+.essay-list { --number-width: 3ch; list-style: none; margin: 0; padding: 0; }
+.essay-list > li { position: relative; padding-bottom: 3.5rem; }
+.essay-list > li:last-child { padding-bottom: 0; }
+.essay-list > li:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  left: 1.5ch;
+  top: 2rem;
+  bottom: .5rem;
+  border-left: 1px solid var(--ink);
+}
+.essay-list, .essay-number { font-family: var(--mono); font-size: 1rem; }
+.essay-list a { display: grid; grid-template-columns: var(--number-width) minmax(0, 1fr); gap: 1.5rem; align-items: baseline; text-decoration: none; }
+.essay-list a:hover h2 { text-decoration: underline; text-underline-offset: .2em; }
+.essay-number { color: var(--ink); font-variant-numeric: tabular-nums; }
+.essay-list h2 { margin: 0; font-size: clamp(1rem, 3vw, 1.5rem); font-weight: 400; line-height: 1.5; overflow-wrap: anywhere; }
+.essay-list .essay-list { position: relative; margin-left: 3rem; padding-top: 2.5rem; }
+.essay-list .essay-list::before {
+  content: "";
+  position: absolute;
+  left: -1.5rem;
+  top: .5rem;
+  height: 1.75rem;
+  border-left: 1px solid var(--ink);
+  transform: rotate(-40deg);
+  transform-origin: top;
+}
+.article { max-width: 700px; margin-inline: auto; }
+.article-header { padding-top: 2.5rem; margin-bottom: 2.5rem; }
+.back-link { display: inline-block; margin-bottom: 3rem; font-size: .85rem; text-decoration: none; }
+.eyebrow { margin: 0 0 1rem; font-size: .75rem; font-weight: 500; text-transform: uppercase; letter-spacing: .13em; }
+.eyebrow span { margin-inline: .6rem; }
+.prose { font-family: var(--sans); font-size: 1.2rem; line-height: 1.85; overflow-wrap: break-word; }
+.prose p { margin: 0 0 1.4em; }
+.prose h2, .prose h3 { line-height: 1.3; margin-top: 2em; }
+.prose a { text-decoration: underline; }
+.prose blockquote, .clanker-rules { border-left: 3px solid var(--ink); margin: 1.5em 0; padding: 1rem 1.5rem; }
+.prose blockquote > :last-child, .clanker-rules > :last-child { margin-bottom: 0; }
+.prose code { font-family: var(--mono); padding: .1em .25em; font-size: .85em; }
+.prose pre { overflow-x: auto; padding: 1rem; border: 1px solid var(--rule); line-height: 1.5; }
+.prose pre code { padding: 0; }
+.prose img { max-width: 100%; height: auto; }
+.prose hr { border: 0; border-top: 1px solid var(--rule); margin-block: 2.5rem; }
+.essay-navigation { border-top: 1px solid var(--rule); margin-top: 3rem; padding-top: 1.5rem; display: flex; justify-content: space-between; gap: 2rem; }
+.essay-navigation a { max-width: 48%; text-decoration: none; font-family: var(--mono); font-size: 1rem; line-height: 1.5; }
+.essay-navigation a:hover { text-decoration: underline; }
+.essay-navigation span { display: block; margin-bottom: .5rem; font-family: var(--sans); font-size: .75rem; }
+.next-essay { margin-left: auto; text-align: right; }
+@media (max-width: 540px) {
+  .shell { width: calc(100% - 2.5rem); }
+  .essay-pathway { padding-top: 3rem; }
+  .essay-list a { gap: .75rem; }
+  .essay-list .essay-list { margin-left: 1.5rem; }
+  .essay-list .essay-list::before { left: 0; height: 1.5rem; }
+  .prose { font-size: 1.125rem; line-height: 1.8; }
+}
+@media print {
+  .back-link, .essay-navigation, .skip-link { display: none; }
+  .shell, .article { width: 100%; max-width: none; }
+  .article-header { padding-top: 0; }
+  .prose { font-size: 11pt; }
+  h1, h2, h3 { break-after: avoid; }
+}

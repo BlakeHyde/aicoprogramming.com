@@ -19,6 +19,26 @@ The insight necessary to understand how to keep a co-programmed codebase from tu
 
 To put it a different way, we want to be able to limit the scope of a given problem to a piece of the system with known boundaries. The structure of the left sidebar of our primary UX should not be in context when we are developing a new report, for example.
 
-Consider a standard web service that handles database operations for a business application. If you simply instruct an LLM to add support for a new model to that system, there is no meaningful constraint around the implementation, and you will end up with variation depending on the models used and other things that happen to be in context when performing the implementation. However, if you specify different layers of the system carefully, you can use separate agents with empty session contexts other than the layers that are relevant to them.
+Consider a standard web service that handles database operations for a business application. If you simply instruct an LLM to add support for a new model to that system, there is no meaningful constraint around the implementation, and you will end up with variation depending on the models used and other things that happen to be in context when performing the implementation. One session may implement a model using an ORM while another templates raw SQL strings, for example.
 
-This separation (in the small) produces coherence (in the large) because each linguavore has been given a language to consume and to produce.
+However, specifying rules about different layers of the system allows you to constrain these behaviors:
+
+<div class="clanker-rules">
+This project uses strict CQRS separation.
+
+Each model is defined in TypeSpec within the `human/models/` subdirectory.
+
+All types are generated with deserializers from these specifications in `api/models/serde/{model}.rs`.
+
+Each model has a command trait and a Postgres implementation using `sqlx` defined in `api/models/commands/{model}.rs`.
+
+Each model has a query trait and a Postgres implementation using `sqlx` defined in `api/models/queries/{model}.rs`.
+
+All GET requests should return a single item or vector of the external model type they are concerned with. Envelopes are handled via middleware.
+
+_...and so on._
+</div>
+
+With these types of rules, you can use separate agents with empty session contexts other than the layers that are relevant to them. One session might be tasked with implementing a new model's serialization type, while another generates its command and query traits and still another---perhaps provided with significant Postgres-specific documentation in its context!---generates its concrete implementation.
+
+This separation in-the-small leads to coherence in-the-large because each linguavore has been given a language to consume and to produce.
