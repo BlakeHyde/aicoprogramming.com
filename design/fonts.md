@@ -1,1 +1,2 @@
 - Headers are IBM Plex Mono. Copy is IBM Plex Sans.
+- GraphViz diagrams should use the IBM Plex family as well.

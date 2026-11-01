@@ -41,6 +41,11 @@ test("loads saved essays in serial order, ignoring editor artifacts", () => {
   assert.ok(essays.length >= 2);
   assert.ok(essays.some((essay) => essay.slug === "premise"));
   assert.ok(essays.some((essay) => essay.slug === "linguavore"));
+  const questions = essays.find((essay) => essay.slug === "three-questions");
+  assert.ok(questions);
+  assert.equal(String(questions.serial), "3");
+  assert.equal((questions.html.match(/<svg /g) || []).length, (questions.body.match(/^```(?:dot|graphviz)\b/gm) || []).length);
+  assert.match(questions.html, /class="footnote-ref"/);
   assert.deepEqual(essays.map((essay) => essay.serial), [...essays].sort(compareSerials).map((essay) => essay.serial));
   essays.forEach((essay, index) => {
     assert.match(essay.slug, /^[a-z0-9-]+$/);
@@ -71,6 +76,15 @@ for (const prefix of ["/", "/example-repository/"]) {
           assert.ok(html.includes(`<h2>${essay.title}</h2>`));
           assert.ok(html.includes(`aria-label="Essay ${essay.serial}">${String(essay.serial).split(".").at(-1).padStart(3, "0")}</span>`));
           assert.ok(!html.includes(essay.excerpt));
+        }
+      }
+      if (url === "/essays/three-questions/") {
+        const questions = essays.find((essay) => essay.url === url);
+        assert.equal((html.match(/<svg /g) || []).length, (questions.body.match(/^```(?:dot|graphviz)\b/gm) || []).length);
+        assert.match(html, /font-family="IBM Plex Sans"/);
+        assert.match(html, /class="footnotes"/);
+        for (const [, anchor] of html.matchAll(/href="#([^"]+)"/g)) {
+          assert.ok(html.includes(`id="${anchor}"`), `Missing anchor: ${anchor}`);
         }
       }
       assert.ok(html.includes(`href="${prefix}assets/style.css"`));

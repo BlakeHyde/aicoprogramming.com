@@ -67,6 +67,17 @@ h1 { margin: 0; font-size: clamp(2rem, 5vw, 3rem); line-height: 1.25; font-weigh
 .prose pre code { padding: 0; }
 .prose img { max-width: 100%; height: auto; }
 .prose hr { border: 0; border-top: 1px solid var(--rule); margin-block: 2.5rem; }
+.graphviz-diagram { margin-block: 2rem; overflow-x: auto; text-align: center; }
+.graphviz-diagram svg { display: block; max-width: 100%; height: auto; margin-inline: auto; }
+.graphviz-diagram text { font-family: var(--sans); }
+.prose dt { font-weight: 600; margin-top: 1.25em; }
+.prose dd { margin: .5em 0 1.25em 1.5rem; }
+.footnotes { font-size: .875em; }
+.footnotes-list { padding-left: 1.5rem; }
+.footnote-item { scroll-margin-top: 2rem; }
+.footnote-item p { margin-bottom: .75em; }
+.footnote-ref { font-size: .75em; line-height: 0; }
+.footnote-ref a, .footnote-backref { text-decoration: none; }
 .essay-navigation { border-top: 1px solid var(--rule); margin-top: 3rem; padding-top: 1.5rem; display: flex; justify-content: space-between; gap: 2rem; }
 .essay-navigation a { max-width: 48%; text-decoration: none; font-family: var(--mono); font-size: 1rem; line-height: 1.5; }
 .essay-navigation a:hover { text-decoration: underline; }
