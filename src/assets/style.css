@@ -6,6 +6,7 @@
   --rule: #c7d4d4;
   --mono: "IBM Plex Mono", monospace;
   --sans: "IBM Plex Sans", sans-serif;
+  --serif: "IBM Plex Serif", serif;
   font-family: var(--sans);
   color: var(--body);
   background: var(--background);
@@ -99,8 +100,9 @@ h1 { margin: 0; font-size: clamp(2rem, 5vw, 3rem); line-height: 1.25; font-weigh
 .prose p { margin: 0 0 1.4em; }
 .prose h2, .prose h3 { line-height: 1.3; margin-top: 2em; }
 .prose a { text-decoration: underline; }
-.prose blockquote, .clanker-rules { border-left: 3px solid var(--ink); margin: 1.5em 0; padding: 1rem 1.5rem; }
-.prose blockquote > :last-child, .clanker-rules > :last-child { margin-bottom: 0; }
+.prose blockquote, .clanker-rules, clanker-output { border-left: 3px solid var(--ink); margin: 1.5em 0; padding: 1rem 1.5rem; }
+clanker-output { display: block; font-family: var(--serif); color: var(--body); background: #ced6d6; }
+.prose blockquote > :last-child, .clanker-rules > :last-child, clanker-output > :last-child { margin-bottom: 0; }
 .prose code { font-family: var(--mono); padding: .1em .25em; font-size: .85em; }
 .prose pre { overflow-x: auto; padding: 1rem; border: 1px solid var(--rule); line-height: 1.5; }
 .prose pre code { padding: 0; }

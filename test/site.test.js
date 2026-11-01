@@ -81,6 +81,7 @@ for (const prefix of ["/", "/example-repository/"]) {
         assert.doesNotMatch(html, /class="intro"|class="lede"|class="reading-time"|class="site-header"|class="site-footer"/);
         assert.match(html, /family=IBM\+Plex\+Mono/);
         assert.match(html, /family=IBM\+Plex\+Sans/);
+        assert.match(html, /family=IBM\+Plex\+Serif/);
         for (const essay of essays) {
           const title = essay.title.endsWith(".") ? essay.title : `${essay.title}.`;
           assert.ok(html.includes(`<h2>${title}</h2>`));

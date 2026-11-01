@@ -41,6 +41,11 @@ test("preserves ordinary code fences and trusted HTML", () => {
   assert.match(html, /<dl><dt>Input<\/dt><dd>SQL<\/dd><\/dl>/);
 });
 
+test("preserves clanker-output elements for block styling", () => {
+  const html = renderMarkdown('<clanker-output>Output <em>emphasis</em>.</clanker-output>');
+  assert.match(html, /<clanker-output>Output <em>emphasis<\/em>\.<\/clanker-output>/);
+});
+
 test("fails with essay and diagram context for invalid DOT", () => {
   assert.throws(() => renderMarkdown("```dot\nnot a graph\n```", { slug: "broken" }), /broken: invalid Graphviz diagram 1/);
 });
