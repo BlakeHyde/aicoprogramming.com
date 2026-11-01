@@ -20,10 +20,22 @@ they will be presented as a "branch" within the tree:
 001 {Title}
  |
 002 {Title}
- | \
- | 001 {Title}
+ |`---.
+ |   001 {Title}
+ |    |
+ |   002 {Title}
  |
 003 {Title}
 ```
 
 These are not decimals, so `2.1.1` is valid. Maintain spacing between articles.
+
+Each title is presented with a period afterward.
+
+Each serial number is styled with three digits using leading zeroes.
+
+Each serial number is circled with the number centered.
+
+Connectors attach to circle edges with curved corners.
+
+Connections are only at the top and bottom of circles.

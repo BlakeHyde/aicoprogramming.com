@@ -11,6 +11,7 @@ const essays = await loadEssays();
 test("serial trees sort integer segments and support nested branches", async () => {
   const serials = ["10", "2.10", "2.1.1", "3", "2.1", "2", "1"];
   const fixture = serials.map((serial) => ({ serial, title: `Title ${serial}`, url: `/test/${serial}/` }));
+  fixture.find((essay) => essay.serial === "10").title = "Already punctuated.";
   const tree = essayTree(fixture);
   assert.deepEqual(tree.map((node) => node.serial), ["1", "2", "3", "10"]);
   assert.deepEqual(tree[1].children.map((node) => node.serial), ["2.1", "2.10"]);
@@ -24,9 +25,17 @@ test("serial trees sort integer segments and support nested branches", async () 
   const template = (await readFile("src/index.njk", "utf8")).replace(/^---[\s\S]*?---/, "");
   const html = environment.renderString(template, { essays: fixture });
   assert.equal((html.match(/<ol class="essay-list">/g) || []).length, 3);
+  assert.equal((html.match(/class="branch-connector"/g) || []).length, 2);
+  assert.equal((html.match(/vector-effect="non-scaling-stroke"/g) || []).length, 2);
   for (const serial of serials) assert.ok(html.includes(`aria-label="Essay ${serial}"`));
-  assert.ok(html.indexOf("Title 2.1</h2>") < html.indexOf("Title 2.1.1</h2>"));
-  assert.ok(html.indexOf("Title 2.1.1</h2>") < html.indexOf("Title 2.10</h2>"));
+  assert.ok(html.indexOf("Title 2.1.</h2>") < html.indexOf("Title 2.1.1.</h2>"));
+  assert.ok(html.indexOf("Title 2.1.1.</h2>") < html.indexOf("Title 2.10.</h2>"));
+  assert.match(html, /<h2>Already punctuated\.<\/h2>/);
+  assert.doesNotMatch(html, /Already punctuated\.\./);
+  for (const essay of fixture) {
+    const title = essay.title.endsWith(".") ? essay.title : `${essay.title}.`;
+    assert.ok(html.includes(`<h2>${title}</h2>`));
+  }
 });
 
 test("rejects malformed, duplicate, and orphaned serials", () => {
@@ -73,7 +82,8 @@ for (const prefix of ["/", "/example-repository/"]) {
         assert.match(html, /family=IBM\+Plex\+Mono/);
         assert.match(html, /family=IBM\+Plex\+Sans/);
         for (const essay of essays) {
-          assert.ok(html.includes(`<h2>${essay.title}</h2>`));
+          const title = essay.title.endsWith(".") ? essay.title : `${essay.title}.`;
+          assert.ok(html.includes(`<h2>${title}</h2>`));
           assert.ok(html.includes(`aria-label="Essay ${essay.serial}">${String(essay.serial).split(".").at(-1).padStart(3, "0")}</span>`));
           assert.ok(!html.includes(essay.excerpt));
         }

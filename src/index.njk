@@ -1,15 +1,20 @@
 ---
 layout: base.njk
 ---
-{% macro articleTree(nodes) %}
+{% macro articleTree(nodes, branch = false) %}
 <ol class="essay-list">
   {% for essay in nodes %}
   <li>
+    {% if branch and loop.first %}
+    <svg class="branch-connector" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+      <path d="M 0 0 V 25 Q 0 50 12 50 H 88 Q 100 50 100 75 V 100" vector-effect="non-scaling-stroke" />
+    </svg>
+    {% endif %}
     <a href="{{ essay.url | url }}">
       <span class="essay-number" aria-label="Essay {{ essay.serial }}">{{ essay.label }}</span>
-      <h2>{{ essay.title }}</h2>
+      <h2>{{ essay.title }}{% if not essay.title.endsWith('.') %}.{% endif %}</h2>
     </a>
-    {% if essay.children.length %}{{ articleTree(essay.children) }}{% endif %}
+    {% if essay.children.length %}{{ articleTree(essay.children, true) }}{% endif %}
   </li>
   {% endfor %}
 </ol>

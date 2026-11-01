@@ -24,32 +24,71 @@ h1, h2, h3, h4, h5, h6 { color: var(--ink); font-family: var(--mono); }
 h1 { margin: 0; font-size: clamp(2rem, 5vw, 3rem); line-height: 1.25; font-weight: 400; text-wrap: balance; }
 .home-header { padding-top: clamp(4rem, 10vw, 8rem); }
 .essay-pathway { padding-top: 4rem; }
-.essay-list { --number-width: 3ch; list-style: none; margin: 0; padding: 0; }
-.essay-list > li { position: relative; padding-bottom: 3.5rem; }
+.essay-list {
+  --node-size: 3rem;
+  --branch-indent: 4rem;
+  --node-gap: 2.5rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-family: var(--mono);
+  font-size: 1rem;
+}
+.essay-list > li { position: relative; padding-bottom: var(--node-gap); }
 .essay-list > li:last-child { padding-bottom: 0; }
 .essay-list > li:not(:last-child)::after {
   content: "";
   position: absolute;
-  left: 1.5ch;
-  top: 2rem;
-  bottom: .5rem;
+  left: calc(var(--node-size) / 2 - .5px);
+  top: var(--node-size);
+  bottom: 0;
   border-left: 1px solid var(--ink);
+  pointer-events: none;
 }
-.essay-list, .essay-number { font-family: var(--mono); font-size: 1rem; }
-.essay-list a { display: grid; grid-template-columns: var(--number-width) minmax(0, 1fr); gap: 1.5rem; align-items: baseline; text-decoration: none; }
+.essay-list a { position: relative; display: grid; grid-template-columns: var(--node-size) minmax(0, 1fr); gap: 1.5rem; align-items: start; text-decoration: none; }
 .essay-list a:hover h2 { text-decoration: underline; text-underline-offset: .2em; }
-.essay-number { color: var(--ink); font-variant-numeric: tabular-nums; }
-.essay-list h2 { margin: 0; font-size: clamp(1rem, 3vw, 1.5rem); font-weight: 400; line-height: 1.5; overflow-wrap: anywhere; }
-.essay-list .essay-list { position: relative; margin-left: 3rem; padding-top: 2.5rem; }
-.essay-list .essay-list::before {
+.essay-number {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--node-size);
+  height: var(--node-size);
+  border: 1px solid var(--ink);
+  border-radius: 50%;
+  background: var(--background);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: .875rem;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+.essay-list a:hover .essay-number, .essay-list a:focus-visible .essay-number { background: var(--ink); color: var(--background); }
+.essay-list h2 { margin: 0; padding-block: .375rem; font-size: clamp(1rem, 3vw, 1.5rem); font-weight: 400; line-height: 2.25rem; overflow-wrap: anywhere; }
+.essay-list .essay-list { position: relative; margin-left: var(--branch-indent); padding-top: var(--node-gap); }
+/* One continuous stroke avoids seams between separately rounded borders. */
+.branch-connector {
+  position: absolute;
+  left: calc(var(--node-size) / 2 - var(--branch-indent));
+  top: calc(-1 * var(--node-gap));
+  width: var(--branch-indent);
+  height: var(--node-gap);
+  overflow: visible;
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1px;
+  pointer-events: none;
+}
+/* Keep the connection intact if a parent title wraps below its circle. */
+.essay-list > li:has(> .essay-list) > a::after {
   content: "";
   position: absolute;
-  left: -1.5rem;
-  top: .5rem;
-  height: 1.75rem;
+  left: calc(var(--node-size) / 2 - .5px);
+  top: var(--node-size);
+  bottom: 0;
   border-left: 1px solid var(--ink);
-  transform: rotate(-40deg);
-  transform-origin: top;
+  pointer-events: none;
 }
 .article { max-width: 700px; margin-inline: auto; }
 .article-header { padding-top: 2.5rem; margin-bottom: 2.5rem; }
@@ -87,8 +126,7 @@ h1 { margin: 0; font-size: clamp(2rem, 5vw, 3rem); line-height: 1.25; font-weigh
   .shell { width: calc(100% - 2.5rem); }
   .essay-pathway { padding-top: 3rem; }
   .essay-list a { gap: .75rem; }
-  .essay-list .essay-list { margin-left: 1.5rem; }
-  .essay-list .essay-list::before { left: 0; height: 1.5rem; }
+  .essay-list { --branch-indent: 2.5rem; --node-gap: 2rem; }
   .prose { font-size: 1.125rem; line-height: 1.8; }
 }
 @media print {
