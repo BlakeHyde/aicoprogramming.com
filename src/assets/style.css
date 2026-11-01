@@ -101,7 +101,19 @@ h1 { margin: 0; font-size: clamp(2rem, 5vw, 3rem); line-height: 1.25; font-weigh
 .prose h2, .prose h3 { line-height: 1.3; margin-top: 2em; }
 .prose a { text-decoration: underline; }
 .prose blockquote, .clanker-rules, clanker-output { border-left: 3px solid var(--ink); margin: 1.5em 0; padding: 1rem 1.5rem; }
-clanker-output { display: block; font-family: var(--serif); color: var(--body); background: #ced6d6; }
+clanker-output {
+  --invader-width: 9rem;
+  --invader-pixel: calc(var(--invader-width) / 11);
+  display: block;
+  font-family: var(--serif);
+  color: var(--body);
+  background-color: #ced6d6;
+  background-image: url("./space-invader.svg");
+  background-repeat: no-repeat;
+  /* Center in short blocks; cap the top inset at two of the sprite's pixels. */
+  background-position: .5rem min(calc(2 * var(--invader-pixel)), 50%);
+  background-size: var(--invader-width) auto;
+}
 .prose blockquote > :last-child, .clanker-rules > :last-child, clanker-output > :last-child { margin-bottom: 0; }
 .prose code { font-family: var(--mono); padding: .1em .25em; font-size: .85em; }
 .prose pre { overflow-x: auto; padding: 1rem; border: 1px solid var(--rule); line-height: 1.5; }
