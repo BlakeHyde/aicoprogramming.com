@@ -15,7 +15,7 @@ None of those premises are true.
 
 Instead, clankers excel in sheer doggedness and are above average in conceptual manipulation, but have very limited fluid memory compared to humans and _can't_ learn because their weights are a different class of information for them than their prompts and are inherently frozen in time. All of that said, we're lucky that tools developed to make software tractable for humans _also help the machine._
 
-The insight necessary to understand how to keep a co-programmed codebase from turning into slop is to recognize that these systems are _linguavores:_ they consume language, process them as inscrutable algebraic values, and emit language again. If we develop our systems as languages, we gradually provide more and more concise ways to express complex ideas, and the clanker can extend and modify these systems without fear.
+The insight necessary to understand how to keep a co-programmed codebase from turning into slop is to recognize that these systems are _linguavores:_ they consume language, process it as inscrutable algebraic values, and emit language again. If we develop our systems as languages, we gradually provide more and more concise ways to express complex ideas, and the clanker can extend and modify these systems without fear.
 
 To put it a different way, we want to be able to limit the scope of a given problem to a piece of the system with known boundaries. The structure of the left sidebar of our primary UX should not be in context when we are developing a new report, for example.
 
