@@ -61,6 +61,8 @@ Bluntly, static types have won. They cannot be replaced by unit tests because th
 
 <aside>
 Consider a function called `add` in a dynamically typed language. If you call `add 6 7`, you might be surprised when you receive `"67"` in response. You encode it as a unit test. When you call it next, though, with `add 10 5`, you get `15`. Strange! You encode another unit test. However, if you encountered `add` in a statically typed language with a type annotation of `add (x: Int) (y: Int) : Int`, `add 6 7 == "67"` is impossible.
+
+These types don't prove _correctness_, but they do eliminate a class of errors that tests alone can't constrain. We'll discuss complementary, conceptually powerful tests called **property-based tests** in a future essay.
 </aside>
 
 The same is true at larger boundaries. APIs designed to minimize developer toil are counter-productive because toil is cheap. For example, GraphQL requires understanding a schema holistically and is no longer a good choice for UX-to-API or machine-to-machine API implementations. It was designed for a period when the UX developer was a _human consumer_ of the API.

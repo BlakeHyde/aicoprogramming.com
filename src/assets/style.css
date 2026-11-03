@@ -1,3 +1,10 @@
+@font-face {
+  font-family: "IBM Plex Math";
+  src: url("./math/plex/IBMPlexMath-Regular.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
 :root {
   color-scheme: light;
   --ink: #335050;
@@ -96,11 +103,11 @@ h1 { margin: 0; font-size: clamp(2rem, 5vw, 3rem); line-height: 1.25; font-weigh
 .back-link { display: inline-block; margin-bottom: 3rem; font-size: .85rem; text-decoration: none; }
 .eyebrow { margin: 0 0 1rem; font-size: .75rem; font-weight: 500; text-transform: uppercase; letter-spacing: .13em; }
 .eyebrow span { margin-inline: .6rem; }
-.prose { font-family: var(--sans); font-size: 1.2rem; line-height: 1.85; overflow-wrap: break-word; }
+.prose { display: flow-root; font-family: var(--sans); font-size: 1.2rem; line-height: 1.85; overflow-wrap: break-word; }
 .prose p { margin: 0 0 1.4em; }
 .prose h2, .prose h3 { line-height: 1.3; margin-top: 2em; }
 .prose a { text-decoration: underline; }
-.prose blockquote, .clanker-rules, clanker-output { border-left: 3px solid var(--ink); margin: 1.5em 0; padding: 1rem 1.5rem; }
+.prose blockquote, .prose aside, .clanker-rules, clanker-output { border-left: 3px solid var(--ink); margin: 1.5em 0; padding: 1rem 1.5rem; }
 clanker-output {
   --invader-width: 9rem;
   --invader-pixel: calc(var(--invader-width) / 11);
@@ -114,7 +121,11 @@ clanker-output {
   background-position: .5rem min(calc(2 * var(--invader-pixel)), 50%);
   background-size: var(--invader-width) auto;
 }
-.prose blockquote > :last-child, .clanker-rules > :last-child, clanker-output > :last-child { margin-bottom: 0; }
+.prose aside { background-color: #ced6d6; }
+.prose math { font-family: "IBM Plex Math", math; }
+.prose eqn { display: block; overflow-x: auto; margin-block: 1.4em; }
+.prose aside, clanker-output { font-size: inherit; line-height: inherit; }
+.prose blockquote > :last-child, .prose aside > :last-child, .clanker-rules > :last-child, clanker-output > :last-child { margin-bottom: 0; }
 .prose code { font-family: var(--mono); padding: .1em .25em; font-size: .85em; }
 .prose pre { overflow-x: auto; padding: 1rem; border: 1px solid var(--rule); line-height: 1.5; }
 .prose pre code { padding: 0; }
@@ -136,6 +147,16 @@ clanker-output {
 .essay-navigation a:hover { text-decoration: underline; }
 .essay-navigation span { display: block; margin-bottom: .5rem; font-family: var(--sans); font-size: .75rem; }
 .next-essay { margin-left: auto; text-align: right; }
+/* The 1000px shell leaves 150px on either side of the 700px article. */
+@media screen and (min-width: 1100px) {
+  .prose aside {
+    float: right;
+    clear: right;
+    width: 20rem;
+    /* Cancel the top padding so the first baseline matches adjacent prose. */
+    margin: -1rem -7.5rem 1.5rem 1.5rem;
+  }
+}
 @media (max-width: 540px) {
   .shell { width: calc(100% - 2.5rem); }
   .essay-pathway { padding-top: 3rem; }

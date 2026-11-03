@@ -73,6 +73,16 @@ test("Graphviz labels use the loaded IBM Plex Sans regular weight", async () => 
   assert.match(template, /family=IBM\+Plex\+Sans:ital,wght@0,400;0,500;/);
 });
 
+test("asides share blockquote styling and float only on wide screens", async () => {
+  const css = await readFile("src/assets/style.css", "utf8");
+  assert.match(css, /\.prose blockquote, \.prose aside,[^{]*\{[^}]*border-left: 3px solid var\(--ink\);/);
+  assert.match(css, /\.prose aside\s*\{\s*background-color: #ced6d6;/);
+  assert.match(css, /\.prose\s*\{[^}]*display: flow-root;/);
+  assert.match(css, /@media screen and \(min-width: 1100px\)\s*\{\s*\.prose aside\s*\{\s*float: right;\s*clear: right;\s*width: 20rem;[\s\S]*?margin: -1rem -7\.5rem 1\.5rem 1\.5rem;/);
+  assert.match(css, /\.prose aside, clanker-output\s*\{ font-size: inherit; line-height: inherit; \}/);
+  assert.match(css, /\.prose math\s*\{ font-family: "IBM Plex Math", math;/);
+});
+
 for (const prefix of ["/", "/example-repository/"]) {
   test(`builds navigable pages at ${prefix}`, async () => {
     execFileSync("node", ["node_modules/@11ty/eleventy/cmd.cjs"], {
@@ -110,6 +120,11 @@ for (const prefix of ["/", "/example-repository/"]) {
       if (url === "/essays/proof-or-consequences/") {
         assert.ok(html.includes(`<a href="${prefix}essays/three-questions/">Three Questions</a>`));
         assert.doesNotMatch(html, /\{\{|\[tq\]/);
+        const aside = html.match(/<aside>([\s\S]+?)<\/aside>/)?.[1];
+        assert.ok(aside);
+        assert.match(aside, /<p>/);
+        assert.match(aside, /<code>add<\/code>/);
+        assert.doesNotMatch(aside, /`/);
       }
       assert.ok(html.includes(`href="${prefix}assets/style.css"`));
       for (const [, target] of html.matchAll(/(?:href|src)="([^"#]+)"/g)) {

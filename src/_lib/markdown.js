@@ -1,9 +1,39 @@
 import MarkdownIt from "markdown-it";
 import footnote from "markdown-it-footnote";
 import { instance } from "@viz-js/viz";
+import texmath from "markdown-it-texmath";
+import temml from "temml";
 
 const viz = await instance();
-const markdown = new MarkdownIt({ html: true, typographer: true }).use(footnote);
+const markdown = new MarkdownIt({ html: true, typographer: true })
+  .use(footnote)
+  .use(texmath, { engine: temml, delimiters: ["dollars", "brackets"] });
+
+// Treat only the special block wrappers as HTML, leaving their contents in
+// the normal Markdown pipeline (including math, footnotes and code fences).
+markdown.block.ruler.before("html_block", "special_block", (state, startLine, endLine, silent) => {
+  if (state.sCount[startLine] - state.blkIndent >= 4) return false;
+  const line = state.src.slice(state.bMarks[startLine] + state.tShift[startLine], state.eMarks[startLine]).trim();
+  const opening = line.match(/^(<(aside|clanker-output)(?:\s+[^<>]*?)?>)(.*)$/);
+  const closing = /^<\/(?:aside|clanker-output)>$/.test(line);
+  if (!opening && !closing) return false;
+  const remainder = opening?.[3] || "";
+  const endTag = opening ? `</${opening[2]}>` : "";
+  // Same-line blocks are useful for short output quotes. Other blocks use
+  // standalone opening/closing tags, so paragraph termination stays explicit.
+  if (remainder && !remainder.endsWith(endTag)) return false;
+  if (silent) return true;
+  const token = state.push("html_block", "", 0);
+  token.content = `${opening ? opening[1] : line}\n`;
+  token.map = [startLine, startLine + 1];
+  if (remainder) {
+    state.md.block.parse(remainder.slice(0, -endTag.length), state.md, state.env, state.tokens);
+    state.push("html_block", "", 0).content = `${endTag}\n`;
+  }
+  state.line = startLine + 1;
+  return true;
+}, { alt: ["paragraph", "reference", "blockquote"] });
+
 const defaultFence = markdown.renderer.rules.fence;
 
 function fitGraphvizText(svg, layout) {

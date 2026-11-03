@@ -9,9 +9,12 @@
   },
   "devDependencies": {
     "@11ty/eleventy": "^3.1.2",
+    "@ibm/plex-math": "^1.1.0",
     "@viz-js/viz": "^3.31.0",
     "gray-matter": "^4.0.3",
     "markdown-it": "^14.1.0",
-    "markdown-it-footnote": "^4.0.0"
+    "markdown-it-footnote": "^4.0.0",
+    "markdown-it-texmath": "^1.0.0",
+    "temml": "^0.14.0"
   }
 }
