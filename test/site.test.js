@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
 import { readFile, access } from "node:fs/promises";
 import loadEssays from "../src/_data/essays.js";
+import { renderMarkdown } from "../src/_lib/markdown.js";
 import { compareSerials, essayTree, serialParts } from "../src/_lib/essay-tree.js";
 import nunjucks from "nunjucks";
 
@@ -53,15 +54,23 @@ test("loads saved essays in serial order, ignoring editor artifacts", () => {
   const questions = essays.find((essay) => essay.slug === "three-questions");
   assert.ok(questions);
   assert.equal(String(questions.serial), "3");
-  assert.equal((questions.html.match(/<svg /g) || []).length, (questions.body.match(/^```(?:dot|graphviz)\b/gm) || []).length);
-  assert.match(questions.html, /class="footnote-ref"/);
+  const html = renderMarkdown(questions.body, { slug: questions.slug });
+  assert.equal((html.match(/<svg /g) || []).length, (questions.body.match(/^```(?:dot|graphviz)\b/gm) || []).length);
+  assert.match(html, /class="footnote-ref"/);
   assert.deepEqual(essays.map((essay) => essay.serial), [...essays].sort(compareSerials).map((essay) => essay.serial));
   essays.forEach((essay, index) => {
     assert.match(essay.slug, /^[a-z0-9-]+$/);
-    assert.ok(essay.html.includes("<p>"));
+    assert.ok(essay.body.trim());
     assert.equal(essay.previous?.slug, essays[index - 1]?.slug);
     assert.equal(essay.next?.slug, essays[index + 1]?.slug);
   });
+});
+
+test("Graphviz labels use the loaded IBM Plex Sans regular weight", async () => {
+  const css = await readFile("src/assets/style.css", "utf8");
+  const template = await readFile("src/_includes/base.njk", "utf8");
+  assert.match(css, /\.graphviz-diagram text\s*\{[^}]*font-family: var\(--sans\);[^}]*font-weight: 400;/);
+  assert.match(template, /family=IBM\+Plex\+Sans:ital,wght@0,400;0,500;/);
 });
 
 for (const prefix of ["/", "/example-repository/"]) {
@@ -97,6 +106,10 @@ for (const prefix of ["/", "/example-repository/"]) {
         for (const [, anchor] of html.matchAll(/href="#([^"]+)"/g)) {
           assert.ok(html.includes(`id="${anchor}"`), `Missing anchor: ${anchor}`);
         }
+      }
+      if (url === "/essays/proof-or-consequences/") {
+        assert.ok(html.includes(`<a href="${prefix}essays/three-questions/">Three Questions</a>`));
+        assert.doesNotMatch(html, /\{\{|\[tq\]/);
       }
       assert.ok(html.includes(`href="${prefix}assets/style.css"`));
       for (const [, target] of html.matchAll(/(?:href|src)="([^"#]+)"/g)) {

@@ -34,6 +34,20 @@ test("renders DOT and Graphviz fences as themed, accessible inline SVGs", () => 
   assert.ok(ids.some((id) => id.startsWith("diagram-test-2-")));
 });
 
+test("fits Plex text to Graphviz layout widths, including long rectangular labels", () => {
+  const html = renderMarkdown('```dot\ndigraph { node [shape=rect]; idea [label="We are creating a mobile and web game."]; idea -> api [label="REST"]; api [label="Web & API\\nSecond line"]; }\n```');
+  const labels = [...html.matchAll(/<text\b[^>]*>/g)];
+  assert.equal(labels.length, 4);
+  for (const [tag] of labels) {
+    assert.match(tag, /textLength="[\d.]+" lengthAdjust="spacingAndGlyphs"/);
+  }
+  const node = html.match(/<g[^>]*class="node">([\s\S]*?)<\/g>/)[1];
+  const points = node.match(/<polygon[^>]*points="([^"]+)"/)[1].split(" ").map((point) => Number(point.split(",")[0]));
+  const width = Number(node.match(/textLength="([^"]+)"/)[1]);
+  assert.ok(width > 0);
+  assert.ok(width < Math.max(...points) - Math.min(...points), "label must fit inside its rectangle with padding");
+});
+
 test("preserves ordinary code fences and trusted HTML", () => {
   const html = renderMarkdown('```js\nconst x = "<svg>";\n```\n\n<dl><dt>Input</dt><dd>SQL</dd></dl>');
   assert.match(html, /class="language-js"/);

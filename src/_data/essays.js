@@ -1,6 +1,5 @@
 import { readdir, readFile } from "node:fs/promises";
 import matter from "gray-matter";
-import { renderMarkdown } from "../_lib/markdown.js";
 import { compareSerials, essayTree, serialParts } from "../_lib/essay-tree.js";
 
 
@@ -20,7 +19,6 @@ export default async function () {
       slug,
       url: `/essays/${slug}/`,
       body: content,
-      html: renderMarkdown(content, { slug }),
       excerpt: data.description || content.trim().split(/\n\s*\n/)[0].replace(/[*_`]/g, ""),
     };
   }));

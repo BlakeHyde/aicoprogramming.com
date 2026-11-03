@@ -122,7 +122,7 @@ clanker-output {
 .prose hr { border: 0; border-top: 1px solid var(--rule); margin-block: 2.5rem; }
 .graphviz-diagram { margin-block: 2rem; overflow-x: auto; text-align: center; }
 .graphviz-diagram svg { display: block; max-width: 100%; height: auto; margin-inline: auto; }
-.graphviz-diagram text { font-family: var(--sans); }
+.graphviz-diagram text { font-family: var(--sans); font-weight: 400; }
 .prose dt { font-weight: 600; margin-top: 1.25em; }
 .prose dd { margin: .5em 0 1.25em 1.5rem; }
 .footnotes { font-size: .875em; }

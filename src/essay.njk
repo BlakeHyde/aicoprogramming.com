@@ -12,7 +12,7 @@ permalink: "{{ essay.url }}"
     <p class="eyebrow">Essay {{ essay.serial | serialLabel }} <span aria-hidden="true">/</span> {{ essay.body | readingTime }} min read</p>
     <h1>{{ essay.title }}</h1>
   </header>
-  <div class="prose">{{ essay.html | safe }}</div>
+  <div class="prose">{{ essay.body | renderContent("njk") | essayMarkdown(essay.slug) | safe }}</div>
   <nav class="essay-navigation" aria-label="Essay navigation">
     {% if essay.previous %}
     <a href="{{ essay.previous.url | url }}"><span>← Previous essay</span>{{ essay.previous.title }}</a>
