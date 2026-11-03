@@ -1,8 +1,11 @@
 # Fonts
 
-- Headers are IBM Plex Mono. Copy is IBM Plex Sans.
-- GraphViz diagrams should use the IBM Plex family as well.
+- Everything is based on the IBM Plex family.
+- Headers are IBM Plex Serif.
+- Copy is IBM Plex Sans.
+- Code is IBM Plex Mono.
 - LaTeX math uses IBM Plex Math.
+- GraphViz diagrams and other SVGs should use the IBM Plex family as well.
 
 # Colors
 
