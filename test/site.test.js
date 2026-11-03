@@ -73,6 +73,19 @@ test("Graphviz labels use the loaded IBM Plex Sans regular weight", async () => 
   assert.match(template, /family=IBM\+Plex\+Sans:ital,wght@0,400;0,500;/);
 });
 
+test("favicon and social preview reuse the space invader watermark shape", async () => {
+  const watermark = await readFile("src/assets/space-invader.svg", "utf8");
+  const shape = watermark.match(/ d="([^"]+)"/)[1];
+  for (const name of ["favicon.svg", "social-preview.svg"]) {
+    const svg = await readFile(`src/assets/${name}`, "utf8");
+    assert.equal(svg.match(/ d="([^"]+)"/)[1], shape);
+  }
+  const png = await readFile("src/assets/social-preview.png");
+  assert.deepEqual([...png.subarray(0, 8)], [137, 80, 78, 71, 13, 10, 26, 10]);
+  assert.equal(png.readUInt32BE(16), 1200);
+  assert.equal(png.readUInt32BE(20), 630);
+});
+
 test("asides share blockquote styling and float only on wide screens", async () => {
   const css = await readFile("src/assets/style.css", "utf8");
   assert.match(css, /\.prose blockquote, \.prose aside,[^{]*\{[^}]*border-left: 3px solid var\(--ink\);/);
@@ -93,6 +106,12 @@ for (const prefix of ["/", "/example-repository/"]) {
       const html = await readFile(`_site${url}index.html`, "utf8");
       assert.match(html, /<html lang="en">/);
       assert.match(html, /id="main"/);
+      const preview = `https://aicoprogramming.com${prefix}assets/social-preview.png`;
+      assert.ok(html.includes(`<meta property="og:image" content="${preview}">`));
+      assert.ok(html.includes(`<meta name="twitter:image" content="${preview}">`));
+      assert.match(html, /<meta name="twitter:card" content="summary_large_image">/);
+      assert.ok(html.includes(`href="${prefix}assets/favicon.svg"`));
+      await access("_site/assets/social-preview.png");
       if (url === "/") {
         assert.match(html, /class="essay-pathway"/);
         assert.match(html, /<h1>AI Co-Programming\.<\/h1>/);

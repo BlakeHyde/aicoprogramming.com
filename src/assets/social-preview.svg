@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#F6F9F9"/>
+  <path transform="translate(270 75) scale(6)" fill="#335050" fill-opacity=".12" d="M20 0h10v10H20z M80 0h10v10H80z M30 10h10v10H30z M70 10h10v10H70z M20 20h70v10H20z M10 30h20v10H10z M40 30h30v10H40z M80 30h20v10H80z M0 40h110v10H0z M0 50h10v10H0z M20 50h70v10H20z M100 50h10v10h-10z M0 60h10v10H0z M20 60h10v10H20z M80 60h10v10H80z M100 60h10v10h-10z M30 70h20v10H30z M60 70h20v10H60z"/>
+</svg>
