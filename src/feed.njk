@@ -1,0 +1,22 @@
+---
+permalink: /feed.xml
+eleventyExcludeFromCollections: true
+---
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>AI Co-Programming.</title>
+    <link>https://aicoprogramming.com{{ '/' | url }}</link>
+    <description>Essays about the sociotechnical discipline of co-programming with AI tools.</description>
+    <language>en</language>
+    <atom:link href="https://aicoprogramming.com{{ '/feed.xml' | url }}" rel="self" type="application/rss+xml"/>
+    {% for essay in essays | reverse %}
+    <item>
+      <title>{{ essay.title | escape }}</title>
+      <link>https://aicoprogramming.com{{ essay.url | url }}</link>
+      <guid isPermaLink="true">https://aicoprogramming.com{{ essay.url | url }}</guid>
+      <description>{{ essay.excerpt | escape }}</description>
+    </item>
+    {% endfor %}
+  </channel>
+</rss>

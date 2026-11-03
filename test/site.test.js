@@ -8,6 +8,7 @@ import { compareSerials, essayTree, serialParts } from "../src/_lib/essay-tree.j
 import nunjucks from "nunjucks";
 
 const essays = await loadEssays();
+const escapeXml = new nunjucks.Environment().getFilter("escape");
 
 test("serial trees sort integer segments and support nested branches", async () => {
   const serials = ["10", "2.10", "2.1.1", "3", "2.1", "2", "1"];
@@ -66,6 +67,19 @@ test("loads saved essays in serial order, ignoring editor artifacts", () => {
   });
 });
 
+test("typography follows the Plex Serif, Sans, Mono and Math roles", async () => {
+  const css = await readFile("src/assets/style.css", "utf8");
+  const template = await readFile("src/_includes/base.njk", "utf8");
+  assert.match(css, /h1, h2, h3, h4, h5, h6\s*\{[^}]*font-family: var\(--serif\);/);
+  assert.match(css, /\.prose\s*\{[^}]*font-family: var\(--sans\);/);
+  assert.match(css, /\.essay-navigation a\s*\{[^}]*font-family: var\(--sans\);/);
+  assert.match(css, /\.prose code\s*\{[^}]*font-family: var\(--mono\);/);
+  assert.match(css, /\.essay-number\s*\{[^}]*font-family: var\(--mono\);/);
+  assert.match(css, /clanker-output\s*\{[^}]*font-family: var\(--serif\);/);
+  assert.match(css, /\.prose math\s*\{[^}]*font-family: "IBM Plex Math", math;/);
+  assert.match(template, /family=IBM\+Plex\+Serif:ital,wght@0,400;0,600;0,700;1,400/);
+});
+
 test("Graphviz labels use the loaded IBM Plex Sans regular weight", async () => {
   const css = await readFile("src/assets/style.css", "utf8");
   const template = await readFile("src/_includes/base.njk", "utf8");
@@ -86,6 +100,18 @@ test("favicon and social preview reuse the space invader watermark shape", async
   assert.equal(png.readUInt32BE(20), 630);
 });
 
+test("RSS escapes essay titles and summaries as XML text", async () => {
+  const environment = new nunjucks.Environment(null, { autoescape: false });
+  environment.addFilter("url", (url) => url);
+  const template = (await readFile("src/feed.njk", "utf8")).replace(/^---[\s\S]*?---\n/, "");
+  const xml = environment.renderString(template, {
+    essays: [{ title: 'Types & <proofs> "quoted"', url: "/essays/test/", excerpt: 'A & B < C; </description><script>not markup</script>' }],
+  });
+  assert.match(xml, /Types &amp; &lt;proofs&gt; &quot;quoted&quot;/);
+  assert.match(xml, /A &amp; B &lt; C; &lt;\/description&gt;&lt;script&gt;not markup&lt;\/script&gt;/);
+  assert.doesNotMatch(xml, /<script>/);
+});
+
 test("asides share blockquote styling and float only on wide screens", async () => {
   const css = await readFile("src/assets/style.css", "utf8");
   assert.match(css, /\.prose blockquote, \.prose aside,[^{]*\{[^}]*border-left: 3px solid var\(--ink\);/);
@@ -102,6 +128,18 @@ for (const prefix of ["/", "/example-repository/"]) {
       env: { ...process.env, PATH_PREFIX: prefix },
       stdio: "pipe",
     });
+    const feed = await readFile("_site/feed.xml", "utf8");
+    assert.ok(feed.startsWith('<?xml version="1.0" encoding="utf-8"?>'));
+    assert.match(feed, /<rss version="2.0"/);
+    assert.ok(feed.includes(`href="https://aicoprogramming.com${prefix}feed.xml"`));
+    assert.equal((feed.match(/<item>/g) || []).length, essays.length);
+    for (const essay of essays) {
+      const absoluteUrl = `https://aicoprogramming.com${prefix}${essay.url.slice(1)}`;
+      assert.ok(feed.includes(`<link>${absoluteUrl}</link>`));
+      assert.ok(feed.includes(`<guid isPermaLink="true">${absoluteUrl}</guid>`));
+      assert.ok(feed.includes(`<title>${escapeXml(essay.title)}</title>`));
+      assert.ok(feed.includes(`<description>${escapeXml(essay.excerpt)}</description>`));
+    }
     for (const url of ["/", ...essays.map((essay) => essay.url)]) {
       const html = await readFile(`_site${url}index.html`, "utf8");
       assert.match(html, /<html lang="en">/);
@@ -111,6 +149,7 @@ for (const prefix of ["/", "/example-repository/"]) {
       assert.ok(html.includes(`<meta name="twitter:image" content="${preview}">`));
       assert.match(html, /<meta name="twitter:card" content="summary_large_image">/);
       assert.ok(html.includes(`href="${prefix}assets/favicon.svg"`));
+      assert.ok(html.includes(`<link rel="alternate" type="application/rss+xml" title="AI Co-Programming." href="${prefix}feed.xml">`));
       await access("_site/assets/social-preview.png");
       if (url === "/") {
         assert.match(html, /class="essay-pathway"/);
