@@ -44,14 +44,21 @@ h1 { margin: 0; font-size: clamp(2rem, 5vw, 3rem); line-height: 1.25; font-weigh
 }
 .essay-list > li { position: relative; padding-bottom: var(--node-gap); }
 .essay-list > li:last-child { padding-bottom: 0; }
-.essay-list > li:not(:last-child)::after {
-  content: "";
+/* Use SVG for both trunks and branches so fractional-pixel positions receive
+   the same stroke rendering at their shared centerline. */
+.main-connector, .branch-connector {
   position: absolute;
-  left: calc(var(--node-size) / 2 - .5px);
-  top: var(--node-size);
-  bottom: 0;
-  border-left: 1px solid var(--ink);
+  overflow: visible;
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1px;
   pointer-events: none;
+}
+.main-connector {
+  left: 0;
+  top: var(--node-size);
+  width: var(--node-size);
+  height: calc(100% - var(--node-size));
 }
 .essay-list a { position: relative; display: grid; grid-template-columns: var(--node-size) minmax(0, 1fr); gap: 1.5rem; align-items: start; text-decoration: none; }
 .essay-list a:hover h2 { text-decoration: underline; text-underline-offset: .2em; }
@@ -77,37 +84,33 @@ h1 { margin: 0; font-size: clamp(2rem, 5vw, 3rem); line-height: 1.25; font-weigh
 .essay-list .essay-list { position: relative; margin-left: var(--branch-indent); padding-top: var(--node-gap); }
 /* One continuous stroke avoids seams between separately rounded borders. */
 .branch-connector {
-  position: absolute;
   left: calc(var(--node-size) / 2 - var(--branch-indent));
   top: calc(-1 * var(--node-gap));
   width: var(--branch-indent);
   height: var(--node-gap);
-  overflow: visible;
-  fill: none;
-  stroke: var(--ink);
-  stroke-width: 1px;
-  pointer-events: none;
 }
-/* Keep the connection intact if a parent title wraps below its circle. */
-.essay-list > li:has(> .essay-list) > a::after {
-  content: "";
-  position: absolute;
-  left: calc(var(--node-size) / 2 - .5px);
-  top: var(--node-size);
-  bottom: 0;
-  border-left: 1px solid var(--ink);
-  pointer-events: none;
-}
+/* A main-connector inside a parent link also covers any wrapped title height. */
 .article { max-width: 700px; margin-inline: auto; }
 .article-header { padding-top: 2.5rem; margin-bottom: 2.5rem; }
 .back-link { display: inline-block; margin-bottom: 3rem; font-size: .85rem; text-decoration: none; }
 .eyebrow { margin: 0 0 1rem; font-size: .75rem; font-weight: 500; text-transform: uppercase; letter-spacing: .13em; }
 .eyebrow span { margin-inline: .6rem; }
-.prose { display: flow-root; font-family: var(--sans); font-size: 1.2rem; line-height: 1.85; overflow-wrap: break-word; }
-.prose p { margin: 0 0 1.4em; }
-.prose h2, .prose h3 { line-height: 1.3; margin-top: 2em; }
+/* Keep vertical spacing in whole body lines, including inside special blocks. */
+.prose {
+  --prose-size: 1.2rem;
+  --prose-leading: 1.85;
+  --baseline: calc(var(--prose-size) * var(--prose-leading));
+  display: flow-root;
+  font-family: var(--sans);
+  font-size: var(--prose-size);
+  line-height: var(--baseline);
+  overflow-wrap: break-word;
+}
+.prose p { margin: 0 0 var(--baseline); }
+.prose h2, .prose h3 { line-height: var(--baseline); margin-block: calc(2 * var(--baseline)) var(--baseline); }
+.prose ul, .prose ol { margin-block: 0 var(--baseline); }
 .prose a { text-decoration: underline; }
-.prose blockquote, .prose aside, .clanker-rules, clanker-output { border-left: 3px solid var(--ink); margin: 1.5em 0; padding: 1rem 1.5rem; }
+.prose blockquote, .prose aside, .clanker-rules, clanker-output { border-left: 3px solid var(--ink); margin: var(--baseline) 0; padding: var(--baseline) 1.5rem; }
 clanker-output {
   --invader-width: 9rem;
   --invader-pixel: calc(var(--invader-width) / 11);
@@ -123,23 +126,31 @@ clanker-output {
 }
 .prose aside { background-color: #ced6d6; }
 .prose math { font-family: "IBM Plex Math", math; }
-.prose eqn { display: block; overflow-x: auto; margin-block: 1.4em; }
+.prose eqn { display: block; overflow-x: auto; margin-block: var(--baseline); }
 .prose aside, clanker-output { font-size: inherit; line-height: inherit; }
 .prose blockquote > :last-child, .prose aside > :last-child, .clanker-rules > :last-child, clanker-output > :last-child { margin-bottom: 0; }
-.prose code { font-family: var(--mono); padding: .1em .25em; font-size: .85em; }
-.prose pre { overflow-x: auto; padding: 1rem; border: 1px solid var(--rule); line-height: 1.5; }
+/* Inline font metrics must not enlarge the surrounding body's line box. */
+.prose code { font-family: var(--mono); padding: .1em .25em; font-size: .85em; line-height: 0; }
+/* Use a body-sized line-box strut; the nested code still renders in Plex Mono. */
+.prose pre { overflow-x: auto; margin-block: var(--baseline); padding: calc(var(--baseline) - 1px) 1rem; border: 1px solid var(--rule); font-family: var(--sans); font-size: inherit; line-height: var(--baseline); }
 .prose pre code { padding: 0; }
 .prose img { max-width: 100%; height: auto; }
-.prose hr { border: 0; border-top: 1px solid var(--rule); margin-block: 2.5rem; }
-.graphviz-diagram { margin-block: 2rem; overflow-x: auto; text-align: center; }
+.prose hr { border: 0; border-top: 1px solid var(--rule); margin-block: var(--baseline) calc(var(--baseline) - 1px); }
+.graphviz-diagram { margin-block: var(--baseline); overflow-x: auto; text-align: center; }
 .graphviz-diagram svg { display: block; max-width: 100%; height: auto; margin-inline: auto; }
 .graphviz-diagram text { font-family: var(--sans); font-weight: 400; }
-.prose dt { font-weight: 600; margin-top: 1.25em; }
-.prose dd { margin: .5em 0 1.25em 1.5rem; }
-.footnotes { font-size: .875em; }
+.prose dl { margin-block: 0 var(--baseline); }
+.prose dt { font-weight: 600; margin-top: var(--baseline); }
+.prose dd { margin: 0 0 var(--baseline) 1.5rem; }
+/* Footnotes have their own smaller rhythm, independent of the body grid. */
+.footnotes {
+  --baseline: calc(var(--prose-size) * .875 * var(--prose-leading));
+  font-size: .875em;
+  line-height: var(--baseline);
+}
 .footnotes-list { padding-left: 1.5rem; }
 .footnote-item { scroll-margin-top: 2rem; }
-.footnote-item p { margin-bottom: .75em; }
+.footnote-item p { margin-bottom: var(--baseline); }
 .footnote-ref { font-size: .75em; line-height: 0; }
 .footnote-ref a, .footnote-backref { text-decoration: none; }
 .essay-navigation { border-top: 1px solid var(--rule); margin-top: 3rem; padding-top: 1.5rem; display: flex; justify-content: space-between; gap: 2rem; }
@@ -153,8 +164,9 @@ clanker-output {
     float: right;
     clear: right;
     width: 20rem;
-    /* Cancel the top padding so the first baseline matches adjacent prose. */
-    margin: -1rem -7.5rem 1.5rem 1.5rem;
+    /* Cancel one line of padding to align the first baseline with adjacent prose.
+       Whole-line paragraph gaps keep subsequent baselines aligned as well. */
+    margin: calc(-1 * var(--baseline)) -7.5rem var(--baseline) 1.5rem;
   }
 }
 @media (max-width: 540px) {
@@ -162,12 +174,12 @@ clanker-output {
   .essay-pathway { padding-top: 3rem; }
   .essay-list a { gap: .75rem; }
   .essay-list { --branch-indent: 2.5rem; --node-gap: 2rem; }
-  .prose { font-size: 1.125rem; line-height: 1.8; }
+  .prose { --prose-size: 1.125rem; --prose-leading: 1.8; }
 }
 @media print {
   .back-link, .essay-navigation, .skip-link { display: none; }
   .shell, .article { width: 100%; max-width: none; }
   .article-header { padding-top: 0; }
-  .prose { font-size: 11pt; }
+  .prose { --prose-size: 11pt; }
   h1, h2, h3 { break-after: avoid; }
 }

@@ -6,6 +6,11 @@
 - Code is IBM Plex Mono.
 - LaTeX math uses IBM Plex Math.
 - GraphViz diagrams and other SVGs should use the IBM Plex family as well.
+- Baselines should be respected by most text.
+  - This means that asides must match the baseline of the body text.
+  - Baselines must be preserved past paragraph spacing.
+  - Inline code and code blocks should use the same baseline.
+  - On the other hand, display math and diagrams may break baselines.
 
 # Colors
 

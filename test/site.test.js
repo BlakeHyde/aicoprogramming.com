@@ -28,7 +28,8 @@ test("serial trees sort integer segments and support nested branches", async () 
   const html = environment.renderString(template, { essays: fixture });
   assert.equal((html.match(/<ol class="essay-list">/g) || []).length, 3);
   assert.equal((html.match(/class="branch-connector"/g) || []).length, 2);
-  assert.equal((html.match(/vector-effect="non-scaling-stroke"/g) || []).length, 2);
+  assert.equal((html.match(/class="main-connector"/g) || []).length, 6);
+  assert.equal((html.match(/vector-effect="non-scaling-stroke"/g) || []).length, 8);
   for (const serial of serials) assert.ok(html.includes(`aria-label="Essay ${serial}"`));
   assert.ok(html.indexOf("Title 2.1.</h2>") < html.indexOf("Title 2.1.1.</h2>"));
   assert.ok(html.indexOf("Title 2.1.1.</h2>") < html.indexOf("Title 2.10.</h2>"));
@@ -38,6 +39,16 @@ test("serial trees sort integer segments and support nested branches", async () 
     const title = essay.title.endsWith(".") ? essay.title : `${essay.title}.`;
     assert.ok(html.includes(`<h2>${title}</h2>`));
   }
+});
+
+test("tree trunks and branches use matching SVG strokes at circle centerlines", async () => {
+  const css = await readFile("src/assets/style.css", "utf8");
+  const template = await readFile("src/index.njk", "utf8");
+  assert.match(css, /\.main-connector, \.branch-connector\s*\{[^}]*stroke: var\(--ink\);[^}]*stroke-width: 1px;/);
+  assert.match(css, /\.main-connector\s*\{\s*left: 0;[^}]*width: var\(--node-size\);[^}]*height: calc\(100% - var\(--node-size\)\);/);
+  assert.match(css, /\.branch-connector\s*\{\s*left: calc\(var\(--node-size\) \/ 2 - var\(--branch-indent\)\);/);
+  assert.match(template, /class="main-connector"[^>]*viewBox="0 0 100 100"[\s\S]*?<path d="M 50 0 V 100"/);
+  assert.doesNotMatch(css, /\.essay-list[^{}]*::after\s*\{[^}]*border-left/);
 });
 
 test("rejects malformed, duplicate, and orphaned serials", () => {
@@ -117,9 +128,21 @@ test("asides share blockquote styling and float only on wide screens", async () 
   assert.match(css, /\.prose blockquote, \.prose aside,[^{]*\{[^}]*border-left: 3px solid var\(--ink\);/);
   assert.match(css, /\.prose aside\s*\{\s*background-color: #ced6d6;/);
   assert.match(css, /\.prose\s*\{[^}]*display: flow-root;/);
-  assert.match(css, /@media screen and \(min-width: 1100px\)\s*\{\s*\.prose aside\s*\{\s*float: right;\s*clear: right;\s*width: 20rem;[\s\S]*?margin: -1rem -7\.5rem 1\.5rem 1\.5rem;/);
+  assert.match(css, /@media screen and \(min-width: 1100px\)\s*\{\s*\.prose aside\s*\{\s*float: right;\s*clear: right;\s*width: 20rem;[\s\S]*?margin: calc\(-1 \* var\(--baseline\)\) -7\.5rem var\(--baseline\) 1\.5rem;/);
   assert.match(css, /\.prose aside, clanker-output\s*\{ font-size: inherit; line-height: inherit; \}/);
   assert.match(css, /\.prose math\s*\{ font-family: "IBM Plex Math", math;/);
+});
+
+test("prose and special blocks preserve whole-line paragraph spacing", async () => {
+  const css = await readFile("src/assets/style.css", "utf8");
+  assert.match(css, /--baseline: calc\(var\(--prose-size\) \* var\(--prose-leading\)\);/);
+  assert.match(css, /\.prose\s*\{[^}]*line-height: var\(--baseline\);/);
+  assert.match(css, /\.prose p\s*\{ margin: 0 0 var\(--baseline\); \}/);
+  assert.match(css, /\.prose blockquote, \.prose aside,[^{]*\{[^}]*margin: var\(--baseline\) 0; padding: var\(--baseline\) 1\.5rem;/);
+  assert.match(css, /\.prose ul, \.prose ol\s*\{ margin-block: 0 var\(--baseline\); \}/);
+  assert.match(css, /\.prose pre\s*\{[^}]*padding: calc\(var\(--baseline\) - 1px\)[^}]*line-height: var\(--baseline\);/);
+  assert.match(css, /@media \(max-width: 540px\)[\s\S]*?\.prose \{ --prose-size: 1\.125rem; --prose-leading: 1\.8; \}/);
+  assert.match(css, /@media print[\s\S]*?\.prose \{ --prose-size: 11pt; \}/);
 });
 
 for (const prefix of ["/", "/example-repository/"]) {
