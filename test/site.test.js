@@ -46,7 +46,7 @@ test("tree trunks and branches use matching SVG strokes at circle centerlines", 
   const css = await readFile("src/assets/style.css", "utf8");
   const template = await readFile("src/index.njk", "utf8");
   assert.match(css, /\.main-connector, \.branch-connector\s*\{[^}]*stroke: var\(--ink\);[^}]*stroke-width: 1px;/);
-  assert.match(css, /\.main-connector\s*\{\s*left: 0;[^}]*width: var\(--node-size\);[^}]*height: calc\(100% - var\(--node-size\)\);/);
+  assert.match(css, /\.main-connector\s*\{[^}]*overflow: hidden;[^}]*left: 0;[^}]*width: var\(--node-size\);[^}]*height: calc\(100% - var\(--node-size\)\);/);
   assert.match(css, /\.branch-connector\s*\{\s*left: calc\(var\(--node-size\) \/ 2 - var\(--branch-indent\)\);/);
   assert.match(template, /class="main-connector"[^>]*viewBox="0 0 100 100"[\s\S]*?<path d="M 50 0 V 100"/);
   assert.doesNotMatch(css, /\.essay-list[^{}]*::after\s*\{[^}]*border-left/);

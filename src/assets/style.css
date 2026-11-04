@@ -55,6 +55,9 @@ h1 { margin: 0; font-size: clamp(2rem, 5vw, 3rem); line-height: 1.25; font-weigh
   pointer-events: none;
 }
 .main-connector {
+  /* A non-wrapping parent link gives its connector zero height. WebKit can
+     still paint that SVG's unscaled path unless its viewport clips it. */
+  overflow: hidden;
   left: 0;
   top: var(--node-size);
   width: var(--node-size);
