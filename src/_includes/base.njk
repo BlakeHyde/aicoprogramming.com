@@ -28,9 +28,12 @@
   <link rel="icon" href="{{ '/assets/favicon.svg' | url }}" type="image/svg+xml">
   <link rel="alternate" type="application/rss+xml" title="AI Co-Programming." href="{{ '/feed.xml' | url }}">
 </head>
-<body>
+<body{% if page.url == '/' %} class="home"{% endif %}>
   <a class="skip-link" href="#main">Skip to content</a>
 
   <main id="main" class="shell" tabindex="-1">{{ content | safe }}</main>
+  <footer class="site-footer">
+    <p>Copyright © {{ copyright }} by Blake Hyde. <a href="{{ '/feed.xml' | url }}">RSS</a>.</p>
+  </footer>
 </body>
 </html>

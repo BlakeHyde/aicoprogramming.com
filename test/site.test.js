@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
 import { readFile, access } from "node:fs/promises";
 import loadEssays from "../src/_data/essays.js";
+import { copyrightYears } from "../src/_lib/copyright.js";
 import { renderMarkdown } from "../src/_lib/markdown.js";
 import { compareSerials, essayTree, serialParts } from "../src/_lib/essay-tree.js";
 import nunjucks from "nunjucks";
@@ -111,6 +112,20 @@ test("favicon and social preview reuse the space invader watermark shape", async
   assert.equal(png.readUInt32BE(20), 630);
 });
 
+test("copyright years start in 2026 and extend only in later years", () => {
+  assert.equal(copyrightYears(2025), "2026");
+  assert.equal(copyrightYears(2026), "2026");
+  assert.equal(copyrightYears(2027), "2026–2027");
+  assert.equal(copyrightYears(2030), "2026–2030");
+});
+
+test("footer styling uses body color and footnote size, fixed only on the home page", async () => {
+  const css = await readFile("src/assets/style.css", "utf8");
+  assert.match(css, /\.site-footer\s*\{[^}]*color: var\(--body\);[^}]*font-size: calc\(1\.2rem \* \.875\);/);
+  assert.match(css, /\.home \.site-footer\s*\{[^}]*position: fixed;[^}]*left: 0;[^}]*bottom: 0;/);
+  assert.match(css, /@media print[\s\S]*?\.site-footer, \.home \.site-footer \{ position: static;/);
+});
+
 test("RSS escapes essay titles and summaries as XML text", async () => {
   const environment = new nunjucks.Environment(null, { autoescape: false });
   environment.addFilter("url", (url) => url);
@@ -167,6 +182,11 @@ for (const prefix of ["/", "/example-repository/"]) {
       const html = await readFile(`_site${url}index.html`, "utf8");
       assert.match(html, /<html lang="en">/);
       assert.match(html, /id="main"/);
+      assert.equal((html.match(/<footer class="site-footer">/g) || []).length, 1);
+      assert.ok(html.indexOf('<footer class="site-footer">') > html.indexOf('</main>'));
+      assert.ok(html.includes(`Copyright © ${copyrightYears()} by Blake Hyde. <a href="${prefix}feed.xml">RSS</a>.`));
+      if (url === "/") assert.match(html, /<body class="home">/);
+      else assert.doesNotMatch(html, /<body class="home">/);
       const preview = `https://aicoprogramming.com${prefix}assets/social-preview.png`;
       assert.ok(html.includes(`<meta property="og:image" content="${preview}">`));
       assert.ok(html.includes(`<meta name="twitter:image" content="${preview}">`));
@@ -178,7 +198,7 @@ for (const prefix of ["/", "/example-repository/"]) {
         assert.match(html, /class="essay-pathway"/);
         assert.match(html, /<h1>AI Co-Programming\.<\/h1>/);
         assert.equal((html.match(/<h1>/g) || []).length, 1);
-        assert.doesNotMatch(html, /class="intro"|class="lede"|class="reading-time"|class="site-header"|class="site-footer"/);
+        assert.doesNotMatch(html, /class="intro"|class="lede"|class="reading-time"|class="site-header"/);
         assert.match(html, /family=IBM\+Plex\+Mono/);
         assert.match(html, /family=IBM\+Plex\+Sans/);
         assert.match(html, /family=IBM\+Plex\+Serif/);

@@ -1,0 +1,6 @@
+- Each page should have a footer:
+    - "Copyright {symbol} 2026 {to current year} by Blake Hyde. [RSS](...)."
+    - The color should be the normal body color.
+    - Size is equivalent to footnote text.
+- On the front page, this is anchored to the bottom left of the viewport.
+- On other pages, it comes after the body.
