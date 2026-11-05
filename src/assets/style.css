@@ -139,8 +139,8 @@ clanker-output {
 .prose pre code { padding: 0; }
 .prose img { max-width: 100%; height: auto; }
 .prose hr { border: 0; border-top: 1px solid var(--rule); margin-block: var(--baseline) calc(var(--baseline) - 1px); }
-.graphviz-diagram { margin-block: var(--baseline); overflow-x: auto; text-align: center; }
-.graphviz-diagram svg { display: block; max-width: 100%; height: auto; margin-inline: auto; }
+.graphviz-diagram, .tikz-diagram { margin-block: var(--baseline); overflow-x: auto; text-align: center; }
+.graphviz-diagram svg, .tikz-diagram svg { display: block; max-width: 100%; height: auto; margin-inline: auto; }
 .graphviz-diagram text { font-family: var(--sans); font-weight: 400; }
 .prose dl { margin-block: 0 var(--baseline); }
 .prose dt { font-weight: 600; margin-top: var(--baseline); }

@@ -11,6 +11,8 @@
   - Baselines must be preserved past paragraph spacing.
   - Inline code and code blocks should use the same baseline.
   - On the other hand, display math and diagrams may break baselines.
+- Smart quotes must be respect in all text including diagrams and titles.
+  - They should be omitted from slugs and other programmatic values.
 
 # Colors
 

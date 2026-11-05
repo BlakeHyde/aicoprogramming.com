@@ -25,6 +25,17 @@ jobs:
       - uses: actions/configure-pages@v5
         id: pages
       - run: npm ci
+      - name: Install TikZ toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends texlive-xetex texlive-latex-extra texlive-pictures dvisvgm
+      - uses: actions/cache@v4
+        with:
+          path: .cache/tikz
+          key: tikz-${{ runner.os }}-${{ hashFiles('src/_lib/tikz*.js', 'src/_lib/typography.js', 'scripts/setup-tikz-fonts.js', 'raw-essays/*.md') }}
+          restore-keys: |
+            tikz-${{ runner.os }}-
+      - run: npm run setup:tikz-fonts
       - run: npm test
       - run: npm run build
         env:

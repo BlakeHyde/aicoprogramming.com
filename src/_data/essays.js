@@ -1,6 +1,7 @@
 import { readdir, readFile } from "node:fs/promises";
 import matter from "gray-matter";
 import { compareSerials, essayTree, serialParts } from "../_lib/essay-tree.js";
+import { smartQuotes } from "../_lib/typography.js";
 
 
 export default async function () {
@@ -14,12 +15,12 @@ export default async function () {
     serialParts(data.serial);
     const slug = file.replace(/\.md$/, "");
     return {
-      title: data.title,
+      title: smartQuotes(data.title),
       serial: data.serial,
       slug,
       url: `/essays/${slug}/`,
       body: content,
-      excerpt: data.description || content.trim().split(/\n\s*\n/)[0].replace(/[*_`]/g, ""),
+      excerpt: smartQuotes(data.description || content.trim().split(/\n\s*\n/)[0].replace(/[*_`]/g, "")),
     };
   }));
   essays.sort(compareSerials);

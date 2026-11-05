@@ -204,7 +204,7 @@ for (const prefix of ["/", "/example-repository/"]) {
         assert.match(html, /family=IBM\+Plex\+Serif/);
         for (const essay of essays) {
           const title = essay.title.endsWith(".") ? essay.title : `${essay.title}.`;
-          assert.ok(html.includes(`<h2>${title}</h2>`));
+          assert.ok(html.includes(`<h2>${escapeXml(title)}</h2>`));
           assert.ok(html.includes(`aria-label="Essay ${essay.serial}">${String(essay.serial).split(".").at(-1).padStart(3, "0")}</span>`));
           assert.ok(!html.includes(essay.excerpt));
         }
@@ -217,6 +217,12 @@ for (const prefix of ["/", "/example-repository/"]) {
         for (const [, anchor] of html.matchAll(/href="#([^"]+)"/g)) {
           assert.ok(html.includes(`id="${anchor}"`), `Missing anchor: ${anchor}`);
         }
+      }
+      if (url === "/essays/small-world/") {
+        const essay = essays.find((essay) => essay.url === url);
+        assert.equal((html.match(/class="tikz-diagram"/g) || []).length, (essay.body.match(/^```tikz\b/gm) || []).length);
+        assert.match(html, /role="img" aria-label="TikZ diagram"/);
+        assert.doesNotMatch(html, /language-tikz|<text\b/);
       }
       if (url === "/essays/proof-or-consequences/") {
         assert.ok(html.includes(`<a href="${prefix}essays/three-questions/">Three Questions</a>`));
