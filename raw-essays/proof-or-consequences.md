@@ -1,6 +1,6 @@
 ---
 title: Proof or Consequences
-serial: 3.1
+serial: 3.5
 ---
 
 Test driven development ("TDD") became a prominent programming fad in the late 2000s and early 2010s. Its distinction from traditional testing is the **red-green-refactor cycle**---the idea that you should express a novel requirement as an executable test, add code to make that test pass, and then refactor to make that code _good_.

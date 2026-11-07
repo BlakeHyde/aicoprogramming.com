@@ -1,6 +1,6 @@
 ---
 title: It's a Small World
-serial: 5
+serial: 6
 ---
 
 Before transformers and attention[^attention] made large language models useful, the leaders in attention-grabbing "artificial intelligence" were Chess- and Go-playing systems. They began in the 20^th Century as attempts to encode human heuristics in relatively small programs, but programs written this way never grew particularly strong.
