@@ -1,6 +1,6 @@
 ---
 title: "Phantasms of the Machine God"
-serial: "4"
+serial: "5"
 ---
 
 The first time I encountered machine-generated text was in the 1990s, and maybe that inoculated me against the early hype for LLMs as GPT 2 and 3 emerged in 2019 and 2020. It wasn't until GPT 4 was released in 2023 that I began to find it compelling.
