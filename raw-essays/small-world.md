@@ -87,7 +87,9 @@ The machine's process is slightly different.
 
 For humans, perfect-information games are a subset of an important class of problems: problems too large for perfect evaluation that are tractable for our general strategy of insight and heuristics. For machines, they are tractable because input is predictable and they can be provided an evaluation score that boils the desired outcome down to a single measure.
 
-In other words, games form a **small world**: their state is tiny and governed by simple rules, and the world's "time" is moving toward a similarly limited future state. Each player is making decisions to bend the graph of future states toward his own ends, and the game is a competition between **evaluation functions**.
+In other words, games form a **small world**:[^sw] their states are tiny, state transitions are governed by simple rules, and the world's "time" is moving toward a static future state governed by those rules. Each player is making decisions to bend the graph of future states toward his own ends, and the game is a competition between **evaluation functions**.
+
+[^sw]: The term "small world" is related to the concept of _open world problems_ and _closed world problems_ in classical AI, but is stronger. Those terms refer to the assumption of whether the operating environment can be completely known or not, and don't require that the _task itself_ be bounded and verifiable.
 
 From our standpoint, that isn't intuitively relevant to all of the other things that we can see clankers "thinking" about. In late 2026, for example, there have been a lot of high-profile mathematical proofs published. Surely _those_ reveal that they have achieved superintelligence?!
 
