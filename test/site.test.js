@@ -155,7 +155,8 @@ test("prose and special blocks preserve whole-line paragraph spacing", async () 
   assert.match(css, /\.prose p\s*\{ margin: 0 0 var\(--baseline\); \}/);
   assert.match(css, /\.prose blockquote, \.prose aside,[^{]*\{[^}]*margin: var\(--baseline\) 0; padding: var\(--baseline\) 1\.5rem;/);
   assert.match(css, /\.prose ul, \.prose ol\s*\{ margin-block: 0 var\(--baseline\); \}/);
-  assert.match(css, /\.prose pre\s*\{[^}]*padding: calc\(var\(--baseline\) - 1px\)[^}]*line-height: var\(--baseline\);/);
+  assert.match(css, /\.prose pre\s*\{[^}]*font-family: var\(--mono\);[^}]*line-height: 1\.6;/);
+  assert.match(css, /\.prose pre code\s*\{[^}]*font-size: inherit; line-height: inherit;/);
   assert.match(css, /@media \(max-width: 540px\)[\s\S]*?\.prose \{ --prose-size: 1\.125rem; --prose-leading: 1\.8; \}/);
   assert.match(css, /@media print[\s\S]*?\.prose \{ --prose-size: 11pt; \}/);
 });
@@ -217,6 +218,12 @@ for (const prefix of ["/", "/example-repository/"]) {
         for (const [, anchor] of html.matchAll(/href="#([^"]+)"/g)) {
           assert.ok(html.includes(`id="${anchor}"`), `Missing anchor: ${anchor}`);
         }
+      }
+      if (url === "/essays/elementary/") {
+        assert.match(html, /<code class="language-c">/);
+        assert.match(html, /class="hljs-keyword"/);
+        assert.match(html, /class="hljs-type"/);
+        assert.doesNotMatch(html, /<script\b/);
       }
       if (url === "/essays/small-world/") {
         const essay = essays.find((essay) => essay.url === url);

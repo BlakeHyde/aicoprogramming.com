@@ -38,6 +38,12 @@ Essays are ordered by their unique integer `serial`. Their filenames become URLs
 
 The homepage, reading times, and previous/next links update automatically. Change the templates in `src/` and the theme in `src/assets/style.css`.
 
+## Code blocks
+
+Label fenced code blocks with their language (for example, `c`, `cpp`, `js`, `python`, or `html`) for build-time syntax highlighting. Highlight.js's common language set and its aliases are supported. Unlabelled fences and unknown languages remain escaped plain text; there is no automatic language detection or browser-side highlighter.
+
+Highlighting uses only shades of the site's ink and the loaded Plex Mono weights. Code blocks have a compact line height independent of the body baseline grid. Inline code remains unhighlighted and aligned with the surrounding prose.
+
 ## TikZ diagrams
 
 Use a `tikz` fence containing one `tikzpicture`. Text after the language name is its accessible description:

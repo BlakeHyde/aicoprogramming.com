@@ -80,7 +80,7 @@ test("special blocks can nest without interpreting code examples as wrappers", (
   const html = renderMarkdown('<aside class="note">\nOuter.\n\n<clanker-output>**Inner**.</clanker-output>\n\n```html\n<aside>literal</aside>\n```\n</aside>');
   assert.match(html, /<aside class="note">\s*<p>Outer\.<\/p>/);
   assert.match(html, /<clanker-output>\s*<p><strong>Inner<\/strong>\.<\/p>\s*<\/clanker-output>/);
-  assert.match(html, /&lt;aside&gt;literal&lt;\/aside&gt;/);
+  assert.match(html.replace(/<\/?span\b[^>]*>/g, ""), /&lt;aside&gt;literal&lt;\/aside&gt;/);
 });
 
 test("math delimiters remain literal inside code", () => {

@@ -27,7 +27,7 @@ test("Markdown prose gets smart quotes, but code and link destinations remain li
   assert.match(html, />“Link”<\/a>/);
   assert.match(html, /href="https:\/\/example.com\/it's"/);
   assert.match(html, /<code>&quot;code&quot; isn't prose<\/code>/);
-  assert.match(html, /const x = &quot;it's&quot;;/);
+  assert.match(html.replace(/<\/?span\b[^>]*>/g, ""), /const x = &quot;it(?:'|&#x27;)s&quot;;/);
 });
 
 test("SVG label typography decodes entities and leaves identifiers and URLs alone", () => {

@@ -6,9 +6,10 @@ import temml from "temml";
 import { compileTikz } from "./tikz.js";
 import { inlineSvg } from "./inline-svg.js";
 import { smartQuotes, smartSvgLabels } from "./typography.js";
+import { highlightCode } from "./highlight.js";
 
 const viz = await instance();
-const markdown = new MarkdownIt({ html: true, typographer: true })
+const markdown = new MarkdownIt({ html: true, typographer: true, highlight: highlightCode })
   .use(footnote)
   .use(texmath, { engine: temml, delimiters: ["dollars", "brackets"] });
 

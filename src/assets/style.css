@@ -134,9 +134,26 @@ clanker-output {
 .prose blockquote > :last-child, .prose aside > :last-child, .clanker-rules > :last-child, clanker-output > :last-child { margin-bottom: 0; }
 /* Inline font metrics must not enlarge the surrounding body's line box. */
 .prose code { font-family: var(--mono); padding: .1em .25em; font-size: .85em; line-height: 0; }
-/* Use a body-sized line-box strut; the nested code still renders in Plex Mono. */
-.prose pre { overflow-x: auto; margin-block: var(--baseline); padding: calc(var(--baseline) - 1px) 1rem; border: 1px solid var(--rule); font-family: var(--sans); font-size: inherit; line-height: var(--baseline); }
-.prose pre code { padding: 0; }
+/* Code blocks have their own compact rhythm; inline code stays on the body grid. */
+.prose pre {
+  overflow-x: auto;
+  margin-block: var(--baseline);
+  padding: 1rem;
+  border: 1px solid var(--rule);
+  background: #edf2f2;
+  font-family: var(--mono);
+  font-size: .85em;
+  line-height: 1.6;
+  tab-size: 4;
+}
+.prose pre code { padding: 0; font-size: inherit; line-height: inherit; }
+/* Highlight with weight and shades of the site's ink, never a rainbow palette. */
+.prose pre .hljs-comment, .prose pre .hljs-quote { color: #526969; font-weight: 400; }
+.prose pre .hljs-keyword, .prose pre .hljs-selector-tag, .prose pre .hljs-meta, .prose pre .hljs-doctag { color: var(--body); font-weight: 600; }
+.prose pre .hljs-string, .prose pre .hljs-regexp, .prose pre .hljs-attr { color: var(--ink); }
+.prose pre .hljs-number, .prose pre .hljs-literal, .prose pre .hljs-symbol,
+.prose pre .hljs-title, .prose pre .hljs-built_in, .prose pre .hljs-type,
+.prose pre .hljs-strong, .prose pre .hljs-emphasis { color: var(--ink); font-weight: 500; }
 .prose img { max-width: 100%; height: auto; }
 .prose hr { border: 0; border-top: 1px solid var(--rule); margin-block: var(--baseline) calc(var(--baseline) - 1px); }
 .graphviz-diagram, .tikz-diagram { margin-block: var(--baseline); overflow-x: auto; text-align: center; }

@@ -12,7 +12,7 @@ try {
   hasChromium = true;
 } catch {}
 
-test("prose, asides, and code blocks share a grid while footnotes use smaller type", {
+test("prose and inline code share the aside grid; blocks and footnotes have their own rhythm", {
   skip: !hasChromium && "Set CHROMIUM to a Chromium executable to run layout checks",
 }, async () => {
   // Keep the fixture in the project rather than /tmp, which snap Chromium isolates.
@@ -32,7 +32,7 @@ test("prose, asides, and code blocks share a grid while footnotes use smaller ty
         <p>${marker}Body line one.<br>${marker}Body line two.</p>
         <p>${marker}Second body paragraph.<br>${marker}Another body line.</p>
         <pre><code>${marker}add 10 5\n${marker}add 6 7</code></pre>
-        <p>${marker}Body after code.</p>
+        <p class="after-code">${marker}Body after code.</p>
         <hr>
         <section class="footnotes"><ol class="footnotes-list"><li class="footnote-item">
           <p>${marker}Footnote line one.<br>${marker}Footnote line two.</p>
@@ -42,11 +42,15 @@ test("prose, asides, and code blocks share a grid while footnotes use smaller ty
         const prose = document.querySelector('.prose');
         const result = {
           step: parseFloat(getComputedStyle(prose).lineHeight),
-          baselines: [...document.querySelectorAll('.baseline-marker')].filter(el => !el.closest('.footnotes')).map(el => el.getBoundingClientRect().top),
+          baselines: [...document.querySelectorAll('.baseline-marker')].filter(el => !el.closest('.footnotes, pre, .after-code')).map(el => el.getBoundingClientRect().top),
           bodySize: parseFloat(getComputedStyle(prose).fontSize),
           footnoteSize: parseFloat(getComputedStyle(document.querySelector('.footnotes')).fontSize),
           footnoteStep: parseFloat(getComputedStyle(document.querySelector('.footnotes')).lineHeight),
           footnoteBaselines: [...document.querySelectorAll('.footnotes .baseline-marker')].map(el => el.getBoundingClientRect().top),
+          codeStep: parseFloat(getComputedStyle(document.querySelector('pre')).lineHeight),
+          codeSize: parseFloat(getComputedStyle(document.querySelector('pre code')).fontSize),
+          preSize: parseFloat(getComputedStyle(document.querySelector('pre')).fontSize),
+          codeBaselines: [...document.querySelectorAll('pre .baseline-marker')].map(el => el.getBoundingClientRect().top),
           floats: getComputedStyle(document.querySelector('aside')).float,
         };
         document.body.append(Object.assign(document.createElement('pre'), {
@@ -62,8 +66,12 @@ test("prose, asides, and code blocks share a grid while footnotes use smaller ty
       ], { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"], timeout: 30000 });
       const match = html.match(/<pre id="layout-result">([^<]+)<\/pre>/);
       assert.ok(match, "Chromium returned layout measurements");
-      const { step, baselines, floats, bodySize, footnoteSize, footnoteStep, footnoteBaselines } = JSON.parse(match[1]);
-      assert.equal(baselines.length, 12);
+      const { step, baselines, floats, bodySize, footnoteSize, footnoteStep, footnoteBaselines, codeStep, codeSize, preSize, codeBaselines } = JSON.parse(match[1]);
+      assert.equal(baselines.length, 9);
+      assert.ok(codeStep < step, "Code blocks use a more compact line height than prose");
+      assert.ok(Math.abs(codeBaselines[1] - codeBaselines[0] - codeStep) < .2);
+      assert.equal(codeSize, preSize, "Code size must not be reduced twice");
+      assert.ok(Math.abs(codeSize / bodySize - .85) < .001);
       assert.ok(Math.abs(footnoteSize / bodySize - .875) < .001);
       assert.ok(footnoteStep < step);
       assert.ok(Math.abs(footnoteBaselines[1] - footnoteBaselines[0] - footnoteStep) < .2);
