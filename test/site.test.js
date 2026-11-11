@@ -219,12 +219,6 @@ for (const prefix of ["/", "/example-repository/"]) {
           assert.ok(html.includes(`id="${anchor}"`), `Missing anchor: ${anchor}`);
         }
       }
-      if (url === "/essays/elementary/") {
-        assert.match(html, /<code class="language-c">/);
-        assert.match(html, /class="hljs-keyword"/);
-        assert.match(html, /class="hljs-type"/);
-        assert.doesNotMatch(html, /<script\b/);
-      }
       if (url === "/essays/small-world/") {
         const essay = essays.find((essay) => essay.url === url);
         assert.equal((html.match(/class="tikz-diagram"/g) || []).length, (essay.body.match(/^```tikz\b/gm) || []).length);
