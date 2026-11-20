@@ -3,9 +3,9 @@ title: Riddle Me This
 serial: 5.8
 ---
 
-In November 2026 there was discourse online around an interview with Thomas Nagel, a philosopher of consciousness, and his opinion about AI as expressed in an interview with _Wired_:[^interview]
+In November 2026 there was discourse online around an interview with Thomas Nagel, a philosopher of consciousness, and his opinion about AI as expressed in an [interview][] with _Wired_:
 
-[^interview]: https://www.wired.com/story/just-ridiculous-a-famed-philosopher-takes-on-ai-consciousness/
+[interview]: https://www.wired.com/story/just-ridiculous-a-famed-philosopher-takes-on-ai-consciousness/
 
 > Interviewer: But isn't all consciousness subjective? Just like we don't know what it's like to be a bat, we don't know what it feels like to be a large language model.
 >
