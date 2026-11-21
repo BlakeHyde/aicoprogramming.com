@@ -1,7 +1,9 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
-import { readFile, access } from "node:fs/promises";
+import { readFile, access, mkdtemp, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import loadEssays from "../src/_data/essays.js";
 import { copyrightYears } from "../src/_lib/copyright.js";
 import { renderMarkdown } from "../src/_lib/markdown.js";
@@ -148,6 +150,11 @@ test("asides share blockquote styling and float only on wide screens", async () 
   assert.match(css, /\.prose math\s*\{ font-family: "IBM Plex Math", math;/);
 });
 
+test("block quotes use normal paragraph spacing outside the rule on the baseline grid", async () => {
+  const css = await readFile("src/assets/style.css", "utf8");
+  assert.match(css, /\.prose blockquote\s*\{ margin-block: var\(--baseline\); padding-block: 0; \}/);
+});
+
 test("prose and special blocks preserve whole-line paragraph spacing", async () => {
   const css = await readFile("src/assets/style.css", "utf8");
   assert.match(css, /--baseline: calc\(var\(--prose-size\) \* var\(--prose-leading\)\);/);
@@ -162,12 +169,14 @@ test("prose and special blocks preserve whole-line paragraph spacing", async () 
 });
 
 for (const prefix of ["/", "/example-repository/"]) {
-  test(`builds navigable pages at ${prefix}`, async () => {
-    execFileSync("node", ["node_modules/@11ty/eleventy/cmd.cjs"], {
+  test(`builds navigable pages at ${prefix}`, async (t) => {
+    const output = await mkdtemp(join(tmpdir(), "aicoprogramming-site-"));
+    t.after(() => rm(output, { recursive: true, force: true }));
+    execFileSync("node", ["node_modules/@11ty/eleventy/cmd.cjs", `--output=${output}`], {
       env: { ...process.env, PATH_PREFIX: prefix },
       stdio: "pipe",
     });
-    const feed = await readFile("_site/feed.xml", "utf8");
+    const feed = await readFile(`${output}/feed.xml`, "utf8");
     assert.ok(feed.startsWith('<?xml version="1.0" encoding="utf-8"?>'));
     assert.match(feed, /<rss version="2.0"/);
     assert.ok(feed.includes(`href="https://aicoprogramming.com${prefix}feed.xml"`));
@@ -180,7 +189,7 @@ for (const prefix of ["/", "/example-repository/"]) {
       assert.ok(feed.includes(`<description>${escapeXml(essay.excerpt)}</description>`));
     }
     for (const url of ["/", ...essays.map((essay) => essay.url)]) {
-      const html = await readFile(`_site${url}index.html`, "utf8");
+      const html = await readFile(`${output}${url}index.html`, "utf8");
       assert.match(html, /<html lang="en">/);
       assert.match(html, /id="main"/);
       assert.equal((html.match(/<footer class="site-footer">/g) || []).length, 1);
@@ -194,7 +203,7 @@ for (const prefix of ["/", "/example-repository/"]) {
       assert.match(html, /<meta name="twitter:card" content="summary_large_image">/);
       assert.ok(html.includes(`href="${prefix}assets/favicon.svg"`));
       assert.ok(html.includes(`<link rel="alternate" type="application/rss+xml" title="AI Co-Programming." href="${prefix}feed.xml">`));
-      await access("_site/assets/social-preview.png");
+      await access(`${output}/assets/social-preview.png`);
       if (url === "/") {
         assert.match(html, /class="essay-pathway"/);
         assert.match(html, /<h1>AI Co-Programming\.<\/h1>/);
@@ -239,7 +248,7 @@ for (const prefix of ["/", "/example-repository/"]) {
         if (/^(https?:|mailto:)/.test(target)) continue;
         assert.ok(target.startsWith(prefix), `Unexpected URL: ${target}`);
         const local = target.slice(prefix.length).split("#")[0];
-        await access(`_site/${local}${local.endsWith("/") || !local ? "index.html" : ""}`);
+        await access(`${output}/${local}${local.endsWith("/") || !local ? "index.html" : ""}`);
       }
     }
   });
